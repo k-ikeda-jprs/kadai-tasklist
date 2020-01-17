@@ -1,9 +1,10 @@
-package controller;
+package controllers;
 
 import java.io.IOException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -32,14 +33,36 @@ public class IndexServlet extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        int page = 1;
+        try {
+            page = Integer.parseInt(request.getParameter("page"));
+        } catch(NumberFormatException e){
+        }
+
         EntityManager em = DBUtils.createEntityManager();
 
         List<TaskDto> tasks = em.createNamedQuery("getAllMessages", TaskDto.class)
+                .setFirstResult(15 * ( page - 1))
+                .setMaxResults(15)
                 .getResultList();
-        response.getWriter().append(Integer.valueOf(tasks.size()).toString());
+
+        // tasks_count = (long)em.createNamedQuery("getMessagesCount", Long.class).getSingleResult();
 
         em.close();
 
+        request.setAttribute("tasks", tasks);
+        //request.setAttribute("tasks_count", tasks_count);
+        request.setAttribute("page", page);
+
+        /*
+        if(request.getSession().getAttribute("flush") != null) {
+            request.setAttribute("flush", request.getSession().getAttribute("flush"));
+            request.getSession().removeAttribute("flush");
+        }*/
+
+        RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/tasklist/index.jsp");
+        rd.forward(request, response);
     }
 
 }

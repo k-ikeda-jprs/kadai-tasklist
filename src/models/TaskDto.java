@@ -20,20 +20,29 @@ import javax.persistence.Table;
 })
 @Table(name = "tasks")
 public class TaskDto {
+    // column id
+    // 連番かつユニークに自動生成
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    // column create_date
+    // 生成時間を格納
     @Column(name = "create_date", length = 255, nullable = false)
     private Timestamp create_date;
 
+    // column update_date
+    // 更新時間を格納
     @Column(name = "update_date", length = 255, nullable = false)
     private Timestamp update_date;
 
+    // column content
+    // タスク内容を格納
     @Column(name = "content", length = 255, nullable = false)
     private String content;
 
+    // 以下、getterとsetter
     public Integer getId(){
         return id;
     }
