@@ -40,9 +40,13 @@ public class ShowServlet extends HttpServlet {
         // 該当するIDのデータをDBより取得
         TaskDto m = em.find(TaskDto.class, Integer.parseInt(request.getParameter("id")));
 
-        em.close();
-
+        // タスクとセッションIDをリクエストスコープに登録
         request.setAttribute("tasks", m);
+        request.setAttribute("_token", request.getSession().getId());
+
+        request.getSession().setAttribute("tasks_id", m.getId());
+
+        em.close();
 
         RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/tasklist/show.jsp");
         rd.forward(request, response);
